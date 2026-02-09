@@ -1,0 +1,14 @@
+---
+- name: Restart networking
+  ansible.builtin.systemd:
+    name: networking
+    state: restarted
+
+- name: Reload sysctl
+  ansible.posix.sysctl:
+    reload: true
+
+- name: Restart pveproxy
+  ansible.builtin.systemd:
+    name: pveproxy
+    state: restarted

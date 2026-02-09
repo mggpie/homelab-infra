@@ -1,0 +1,4 @@
+.vault_pass
+*.retry
+.become_pass
+.cache/

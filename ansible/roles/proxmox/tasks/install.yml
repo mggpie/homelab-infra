@@ -1,0 +1,47 @@
+---
+# Proxmox VE package installation
+
+- name: Install Proxmox VE kernel
+  ansible.builtin.apt:
+    name:
+      - proxmox-default-kernel
+      - proxmox-kernel-6.8
+    state: present
+  register: pve_kernel
+
+- name: Remove Debian default kernel
+  ansible.builtin.apt:
+    name:
+      - "linux-image-amd64"
+      - "linux-image-6.1*"
+    state: absent
+    purge: true
+  when: pve_kernel is changed  # noqa: no-handler
+
+- name: Update GRUB
+  ansible.builtin.command: update-grub
+  changed_when: true
+  when: pve_kernel is changed  # noqa: no-handler
+
+- name: Reboot into Proxmox kernel
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+    msg: "Rebooting into Proxmox kernel"
+  when: pve_kernel is changed  # noqa: no-handler
+
+- name: Install Proxmox VE packages
+  ansible.builtin.apt:
+    name:
+      - proxmox-ve
+      - postfix
+      - open-iscsi
+      - chrony
+    state: present
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+- name: Remove os-prober (PVE recommendation)
+  ansible.builtin.apt:
+    name: os-prober
+    state: absent
+    purge: true

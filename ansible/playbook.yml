@@ -1,0 +1,23 @@
+---
+# Proxmox VE on KVM/QEMU — full deployment
+#
+# Usage:
+#   ./deploy.sh          — provision VM + install Proxmox (full run)
+#   ./deploy.sh proxmox  — run only Ansible against existing VM
+
+- name: Configure Proxmox VE
+  hosts: proxmox
+  become: true
+  vars_files:
+    - secrets.yml
+
+  pre_tasks:
+    - name: Wait for SSH
+      ansible.builtin.wait_for_connection:
+        delay: 5
+        timeout: 300
+      tags: [always]
+
+  roles:
+    - role: proxmox
+      tags: [proxmox]

@@ -1,0 +1,44 @@
+---
+# Post-install hardening and cleanup
+
+- name: Remove subscription nag from web UI
+  ansible.builtin.replace:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    regexp: "res === null \\|\\| res === undefined \\|\\| !res \\|\\| res\\.data\\.status\\.toLowerCase\\(\\) !== 'active'"
+    replace: "false"
+    backup: true
+  notify: Restart pveproxy
+  failed_when: false
+
+- name: Ensure PVE services are enabled and running
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - pvedaemon
+    - pveproxy
+    - pvestatd
+    - pve-cluster
+    - corosync
+    - chrony
+
+- name: Configure nested virtualization (KVM in KVM)
+  ansible.builtin.copy:
+    content: "options kvm_intel nested=1\n"
+    dest: /etc/modprobe.d/kvm-nested.conf
+    mode: "0644"
+  when: pve_nested_virt
+
+- name: Clean apt cache
+  ansible.builtin.apt:
+    autoclean: true
+    autoremove: true
+
+- name: Display Proxmox VE info
+  ansible.builtin.debug:
+    msg:
+      - "Proxmox VE installed successfully"
+      - "Web UI: https://{{ pve_bridge_address }}:8006"
+      - "Login: {{ pve_user }}@pam"
+      - "SSH: ssh {{ pve_user }}@{{ pve_bridge_address }}"

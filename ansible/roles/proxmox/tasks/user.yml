@@ -1,0 +1,26 @@
+---
+# PVE user and access
+
+- name: Create PVE user (PAM realm)
+  ansible.builtin.command:
+    cmd: "pveum user add {{ pve_user }}@pam"
+  register: pve_user_add
+  changed_when: pve_user_add.rc == 0
+  failed_when:
+    - pve_user_add.rc != 0
+    - "'already exists' not in pve_user_add.stderr"
+
+- name: Set PVE user password
+  ansible.builtin.shell:
+    cmd: "echo '{{ vault_user_password }}' | pveum passwd {{ pve_user }}@pam"
+  changed_when: true
+  no_log: true
+
+- name: Grant Administrator role to user
+  ansible.builtin.command:
+    cmd: "pveum acl modify / --users {{ pve_user }}@pam --roles Administrator"
+  register: pve_acl
+  changed_when: pve_acl.rc == 0
+  failed_when:
+    - pve_acl.rc != 0
+    - "'already exists' not in pve_acl.stderr"

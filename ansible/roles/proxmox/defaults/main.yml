@@ -1,0 +1,26 @@
+---
+# Proxmox VE version
+pve_release: "8"
+pve_distribution: bookworm
+
+# Hostname
+pve_hostname: proxmox
+pve_domain: local
+pve_fqdn: "{{ pve_hostname }}.{{ pve_domain }}"
+
+# Network — bridged setup
+pve_bridge_name: vmbr0
+pve_bridge_iface: enp1s0
+pve_bridge_address: 192.168.122.10
+pve_bridge_netmask: 255.255.255.0
+pve_bridge_gateway: 192.168.122.1
+
+# PVE user
+pve_user: me
+pve_user_email: "me@{{ pve_domain }}"
+
+# Enterprise repo (disabled — use no-subscription)
+pve_enterprise_repo: false
+
+# Nested virtualization (we're inside KVM already)
+pve_nested_virt: true

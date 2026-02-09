@@ -1,0 +1,18 @@
+---
+# Hostname and /etc/hosts — must be correct before PVE install
+
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ pve_hostname }}"
+
+- name: Configure /etc/hostname
+  ansible.builtin.copy:
+    content: "{{ pve_hostname }}\n"
+    dest: /etc/hostname
+    mode: "0644"
+
+- name: Configure /etc/hosts with FQDN
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+    mode: "0644"

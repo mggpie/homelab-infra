@@ -1,0 +1,24 @@
+---
+- name: Include hostname tasks
+  ansible.builtin.import_tasks: hostname.yml
+  tags: [proxmox, hostname]
+
+- name: Include repository tasks
+  ansible.builtin.import_tasks: repositories.yml
+  tags: [proxmox, repos]
+
+- name: Include Proxmox VE install tasks
+  ansible.builtin.import_tasks: install.yml
+  tags: [proxmox, install]
+
+- name: Include network tasks
+  ansible.builtin.import_tasks: network.yml
+  tags: [proxmox, network]
+
+- name: Include user tasks
+  ansible.builtin.import_tasks: user.yml
+  tags: [proxmox, user]
+
+- name: Include post-install tasks
+  ansible.builtin.import_tasks: post-install.yml
+  tags: [proxmox, post]

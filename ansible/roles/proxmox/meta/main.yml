@@ -1,0 +1,12 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: mggpie
+  description: Proxmox VE installation on Debian 12
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
